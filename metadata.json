@@ -1,0 +1,5 @@
+{
+  "name": "Infinite Grid Portfolio",
+  "description": "An interactive, infinite-scrolling canvas portfolio featuring a draggable grid layout and smooth motion aesthetics.",
+  "requestFramePermissions": []
+}
