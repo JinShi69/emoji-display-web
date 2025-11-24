@@ -301,7 +301,7 @@ const Portfolio: React.FC = () => {
   }, [isModalOpen]);
 
 
-  // Drag Handlers
+  // Drag Handlers (Mouse)
   const handleMouseDown = (e: React.MouseEvent) => {
     // Buttons and modal blocking
     if (e.target instanceof Element && (e.target.closest('button') || e.target.closest('.no-drag'))) return;
@@ -329,6 +329,36 @@ const Portfolio: React.FC = () => {
   };
 
   const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Touch Handlers (Mobile)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.target instanceof Element && (e.target.closest('button') || e.target.closest('.no-drag'))) return;
+    
+    const touch = e.touches[0];
+    setIsDragging(true);
+    setDragStart({ x: touch.clientX - position.x, y: touch.clientY - position.y });
+    dragDistance.current = 0;
+    resetInteraction();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    resetInteraction();
+    if (!isDragging) return;
+    
+    const touch = e.touches[0];
+    const newX = touch.clientX - dragStart.x;
+    const newY = touch.clientY - dragStart.y;
+    
+    const dx = touch.clientX - (dragStart.x + position.x);
+    const dy = touch.clientY - (dragStart.y + position.y);
+    dragDistance.current += Math.abs(dx) + Math.abs(dy);
+
+    setPosition({ x: newX, y: newY });
+  };
+
+  const handleTouchEnd = () => {
     setIsDragging(false);
   };
 
@@ -389,6 +419,9 @@ const Portfolio: React.FC = () => {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Header - Transparent & Minimal */}
       <nav className="fixed top-0 left-0 w-full z-50 px-6 py-4 pointer-events-none flex justify-end">
